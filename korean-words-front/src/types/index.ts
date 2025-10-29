@@ -1,8 +1,10 @@
-export const enum Difficulty {
-  HARD = 'HARD',
-  NORMAL = 'NORMAL',
-  EASY = 'EASY',
-}
+export type Difficulty = 'HARD' | 'NORMAL' | 'EASY';
+
+export const Difficulty = {
+  HARD: 'HARD' as const,
+  NORMAL: 'NORMAL' as const,
+  EASY: 'EASY' as const,
+};
 
 export interface User {
   id: string;
