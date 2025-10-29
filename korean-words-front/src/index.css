@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 text-gray-900 m-0 min-h-screen;
+    /* Disable pull-to-refresh on mobile */
+    overscroll-behavior-y: contain;
+    /* Better text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Prevent zoom on input focus for mobile */
+  @media screen and (max-width: 768px) {
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+  }
+}
+
+@layer components {
+  /* Mobile-first button styles */
+  .btn {
+    @apply px-6 py-4 rounded-xl font-semibold transition-all duration-200 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    /* Better touch target - minimum 44x44px */
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 shadow-md hover:shadow-lg;
+  }
+
+  .btn-danger {
+    @apply bg-gradient-to-r from-red-600 to-pink-600 text-white hover:from-red-700 hover:to-pink-700 shadow-lg hover:shadow-xl;
+  }
+
+  /* Mobile-optimized icon buttons */
+  .btn-icon {
+    @apply p-3 rounded-xl transition-all active:bg-gray-100 active:scale-95;
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-icon-danger {
+    @apply p-3 rounded-xl transition-all active:bg-red-50 text-red-600 active:scale-95;
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Mobile-friendly inputs */
+  .input {
+    @apply w-full px-4 py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white text-base;
+    min-height: 48px;
+  }
+
+  /* Mobile-optimized cards */
+  .card {
+    @apply bg-white rounded-2xl shadow-lg p-5 border border-gray-100 transition-all duration-300;
+  }
+
+  .card-interactive {
+    @apply bg-white rounded-2xl shadow-lg p-5 border border-gray-100 transition-all duration-300 cursor-pointer active:shadow-2xl active:scale-[0.98];
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Mobile-specific utilities */
+  @media (max-width: 768px) {
+    .btn {
+      @apply py-4 px-6 text-base;
+    }
+
+    .card {
+      @apply p-4;
+    }
+
+    .card-interactive {
+      @apply p-4;
+    }
+  }
+}

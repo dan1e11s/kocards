@@ -1,0 +1,21 @@
+{
+  "name": "kocards",
+  "version": "1.0.0",
+  "description": "Korean language learning app with spaced repetition",
+  "private": true,
+  "workspaces": [
+    "korean-words-front",
+    "korean-words-back"
+  ],
+  "scripts": {
+    "dev:front": "npm run dev --workspace=korean-words-front",
+    "dev:back": "npm run start:dev --workspace=korean-words-back",
+    "dev": "concurrently \"npm run dev:back\" \"npm run dev:front\"",
+    "build:front": "npm run build --workspace=korean-words-front",
+    "build:back": "npm run build --workspace=korean-words-back",
+    "build": "npm run build:back && npm run build:front"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
