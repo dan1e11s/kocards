@@ -35,8 +35,5 @@ lerna-debug.log*
 .DS_Store
 Thumbs.db
 
-# Prisma
-korean-words-back/prisma/migrations/
-
 # Build outputs
 *.tsbuildinfo
