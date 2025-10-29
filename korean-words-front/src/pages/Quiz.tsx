@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { HiArrowLeft, HiCheckCircle, HiXCircle } from 'react-icons/hi';
 import { cardsApi } from '../services/api';
@@ -8,8 +8,6 @@ import { Difficulty, type Card } from '../types/index.js';
 export default function Quiz() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const mode = searchParams.get('mode') || 'flashcards';
   const queryClient = useQueryClient();
 
   const [currentIndex, setCurrentIndex] = useState(0);

@@ -1,4 +1,4 @@
-export enum Difficulty {
+export const enum Difficulty {
   HARD = 'HARD',
   NORMAL = 'NORMAL',
   EASY = 'EASY',
@@ -23,6 +23,7 @@ export interface Deck {
   createdAt: string;
   updatedAt: string;
   userId: string;
+  cards?: Card[];
   _count?: {
     cards: number;
   };

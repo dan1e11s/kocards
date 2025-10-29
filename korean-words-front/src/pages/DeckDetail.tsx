@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  HiArrowLeft, HiPlus, HiTrash, HiLightningBolt,
+  HiPlus, HiTrash, HiLightningBolt,
   HiClipboardList
 } from 'react-icons/hi';
 import { decksApi, cardsApi } from '../services/api';
