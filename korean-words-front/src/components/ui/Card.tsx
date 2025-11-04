@@ -1,4 +1,4 @@
-import { HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'success' | 'error' | 'info';
@@ -11,7 +11,12 @@ const variantClasses = {
   info: 'bg-blue-50 border-blue-200',
 };
 
-export function Card({ variant = 'default', className = '', children, ...props }: CardProps) {
+export function Card({
+  variant = 'default',
+  className = '',
+  children,
+  ...props
+}: CardProps) {
   const baseClasses = 'p-6 rounded-2xl border-2 shadow-sm';
   const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;
 
