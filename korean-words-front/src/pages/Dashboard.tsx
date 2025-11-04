@@ -4,15 +4,19 @@ import { Link } from 'react-router-dom';
 import { HiPlus, HiTrash, HiLogout, HiBookOpen, HiCollection } from 'react-icons/hi';
 import { decksApi } from '../services/api';
 import { useAuthStore } from '../store/authStore';
+import { useToast } from '../hooks';
+import { ToastContainer, ConfirmModal } from '../components/ui';
 import type { CreateDeckDto } from '../types/index.js';
 
 export default function Dashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [deleteDeckId, setDeleteDeckId] = useState<string | null>(null);
   const [deckName, setDeckName] = useState('');
   const [deckDescription, setDeckDescription] = useState('');
 
   const logout = useAuthStore((state) => state.logout);
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const { data: decks, isLoading } = useQuery({
     queryKey: ['decks'],
@@ -26,6 +30,10 @@ export default function Dashboard() {
       setShowCreateModal(false);
       setDeckName('');
       setDeckDescription('');
+      toast.success('Deck created successfully! ✅');
+    },
+    onError: () => {
+      toast.error('Failed to create deck');
     },
   });
 
@@ -33,6 +41,12 @@ export default function Dashboard() {
     mutationFn: (id: string) => decksApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['decks'] });
+      toast.success('Deck deleted');
+      setDeleteDeckId(null);
+    },
+    onError: () => {
+      toast.error('Failed to delete deck');
+      setDeleteDeckId(null);
     },
   });
 
@@ -44,13 +58,29 @@ export default function Dashboard() {
   const handleDeleteDeck = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this deck?')) {
-      deleteMutation.mutate(id);
+    setDeleteDeckId(id);
+  };
+
+  const confirmDelete = () => {
+    if (deleteDeckId) {
+      deleteMutation.mutate(deleteDeckId);
     }
   };
 
   return (
     <div className="min-h-screen">
+      <ToastContainer toasts={toast.toasts} onClose={toast.close} />
+
+      <ConfirmModal
+        isOpen={deleteDeckId !== null}
+        title="Delete deck?"
+        message="Are you sure you want to delete this deck and all its cards? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteDeckId(null)}
+      />
       <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 py-3 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">

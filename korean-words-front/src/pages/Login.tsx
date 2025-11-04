@@ -2,80 +2,83 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authApi } from '../services/api';
 import { useAuthStore } from '../store/authStore';
+import { useToast } from '../hooks';
+import { Input, Button, ToastContainer } from '../components/ui';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const toast = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
     try {
       const response = await authApi.login({ email, password });
       setAuth(response.user, response.accessToken);
+      toast.success('Welcome back! 🎉');
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to login');
+      const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="card w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-6">KoCards</h1>
-        <h2 className="text-xl font-semibold text-center mb-6">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4">
+      <ToastContainer toasts={toast.toasts} onClose={toast.close} />
 
-        {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4">
-            {error}
-          </div>
-        )}
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-2 border-gray-100">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            KoCards
+          </h1>
+          <p className="text-gray-600">Learn Korean effectively</p>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input"
-              required
-            />
-          </div>
+          <Input
+            type="email"
+            label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="example@email.com"
+            autoComplete="email"
+            required
+          />
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input"
-              required
-            />
-          </div>
+          <Input
+            type="password"
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            autoComplete="current-password"
+            required
+          />
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="btn btn-primary w-full"
+            variant="gradient"
+            size="lg"
+            fullWidth
           >
-            {loading ? 'Loading...' : 'Login'}
-          </button>
+            {loading ? 'Logging in...' : 'Login'}
+          </Button>
         </form>
 
-        <p className="text-center mt-4 text-sm">
+        <p className="text-center mt-6 text-sm text-gray-600">
           Don't have an account?{' '}
-          <Link to="/register" className="text-blue-600 hover:underline">
-            Register
+          <Link to="/register" className="text-indigo-600 hover:text-indigo-700 font-semibold">
+            Sign up
           </Link>
         </p>
       </div>

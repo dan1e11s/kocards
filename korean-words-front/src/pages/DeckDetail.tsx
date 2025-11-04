@@ -3,9 +3,11 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   HiPlus, HiTrash, HiLightningBolt,
-  HiClipboardList
+  HiClipboardList, HiAcademicCap
 } from 'react-icons/hi';
 import { decksApi, cardsApi } from '../services/api';
+import { useToast } from '../hooks';
+import { ToastContainer, ConfirmModal } from '../components/ui';
 import type { CreateCardDto } from '../types/index.js';
 
 export default function DeckDetail() {
@@ -14,10 +16,13 @@ export default function DeckDetail() {
   const queryClient = useQueryClient();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [front, setFront] = useState('');
   const [back, setBack] = useState('');
   const [pronunciation, setPronunciation] = useState('');
   const [notes, setNotes] = useState('');
+
+  const toast = useToast();
 
   const { data: deck, isLoading: deckLoading } = useQuery({
     queryKey: ['deck', id],
@@ -41,6 +46,10 @@ export default function DeckDetail() {
       setBack('');
       setPronunciation('');
       setNotes('');
+      toast.success('Card added successfully! ✅');
+    },
+    onError: () => {
+      toast.error('Failed to create card');
     },
   });
 
@@ -49,6 +58,12 @@ export default function DeckDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['deck', id] });
       queryClient.invalidateQueries({ queryKey: ['deck-stats', id] });
+      toast.success('Card deleted');
+      setDeleteConfirm(null);
+    },
+    onError: () => {
+      toast.error('Failed to delete card');
+      setDeleteConfirm(null);
     },
   });
 
@@ -65,8 +80,12 @@ export default function DeckDetail() {
   };
 
   const handleDeleteCard = (cardId: string) => {
-    if (window.confirm('Are you sure you want to delete this card?')) {
-      deleteCardMutation.mutate(cardId);
+    setDeleteConfirm(cardId);
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirm) {
+      deleteCardMutation.mutate(deleteConfirm);
     }
   };
 
@@ -80,6 +99,18 @@ export default function DeckDetail() {
 
   return (
     <div className="min-h-screen">
+      <ToastContainer toasts={toast.toasts} onClose={toast.close} />
+
+      <ConfirmModal
+        isOpen={deleteConfirm !== null}
+        title="Delete card?"
+        message="Are you sure you want to delete this card? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteConfirm(null)}
+      />
       <nav className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="max-w-6xl mx-auto">
           <Link to="/dashboard" className="text-blue-600 hover:underline">
@@ -114,23 +145,24 @@ export default function DeckDetail() {
             <HiPlus className="text-xl" />
             <span>Add Card</span>
           </button>
+          {/* Always show Practice button */}
+          <button
+            onClick={() => navigate(`/learn/${id}?mode=practice`)}
+            className="btn bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 w-full sm:flex-1 text-lg py-6"
+          >
+            <HiAcademicCap className="text-2xl" />
+            <span>Practice</span>
+          </button>
+
+          {/* Show Review button only if there are due cards */}
           {stats && stats.dueCards > 0 && (
-            <>
-              <button
-                onClick={() => navigate(`/study/${id}`)}
-                className="btn bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 shadow-md hover:shadow-lg flex items-center justify-center gap-2 w-full sm:flex-1"
-              >
-                <HiLightningBolt className="text-xl" />
-                <span>Flashcards ({stats.dueCards})</span>
-              </button>
-              <button
-                onClick={() => navigate(`/quiz/${id}`)}
-                className="btn bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 shadow-md hover:shadow-lg flex items-center justify-center gap-2 w-full sm:flex-1"
-              >
-                <HiClipboardList className="text-xl" />
-                <span>Quiz Mode ({stats.dueCards})</span>
-              </button>
-            </>
+            <button
+              onClick={() => navigate(`/learn/${id}?mode=review`)}
+              className="btn bg-gradient-to-r from-orange-600 to-red-600 text-white hover:from-orange-700 hover:to-red-700 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 w-full sm:flex-1 text-lg py-6"
+            >
+              <HiLightningBolt className="text-2xl" />
+              <span>Review ({stats.dueCards})</span>
+            </button>
           )}
         </div>
 

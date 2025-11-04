@@ -7,8 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import DeckDetail from './pages/DeckDetail';
-import Study from './pages/Study';
-import Quiz from './pages/Quiz';
+import Learn from './pages/Learn';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,18 +53,10 @@ function App() {
             }
           />
           <Route
-            path="/study/:id"
+            path="/learn/:id"
             element={
               <PrivateRoute>
-                <Study />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/quiz/:id"
-            element={
-              <PrivateRoute>
-                <Quiz />
+                <Learn />
               </PrivateRoute>
             }
           />
