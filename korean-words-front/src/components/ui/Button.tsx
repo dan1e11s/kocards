@@ -1,5 +1,4 @@
 import { type ButtonHTMLAttributes, forwardRef } from 'react';
-import { motion } from 'framer-motion';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'gradient';
@@ -42,16 +41,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? 'w-full' : ''} ${className}`;
 
     return (
-      <motion.button
+      <button
         ref={ref}
-        whileTap={{ scale: disabled ? 1 : 0.95 }}
         className={classes}
         disabled={disabled}
         {...props}
       >
         {icon && <span className="text-xl">{icon}</span>}
         {children}
-      </motion.button>
+      </button>
     );
   }
 );
